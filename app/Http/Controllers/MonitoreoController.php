@@ -12,14 +12,15 @@ use Maatwebsite\Excel\Facades\Excel;
 class MonitoreoController extends Controller
 {
     private $list_file = array();
-    private $rutaInit = "D:\Monitoreos2";
+    private $rutaInit = "D:\Monitoreos";
 
     public function extract_monitoreo()
     {
 
         $rutaMonits = [
-            "/aaa/",
-            "/aml/",
+            "/uala/",
+            "/nubank/",
+            "/crediservir/",
             // "/auteco/",
         ];
 
@@ -54,6 +55,7 @@ class MonitoreoController extends Controller
                 $tempKey = trim($monits[$i], "/");
                 $tempName = trim($arrFiles[$j], ".zip");
                 $this->list_file[$tempKey][] = $tempName;
+                Log::info('Monitoreo extraido, ' . $tempKey . " " . $tempName);
             }
         }
 
@@ -87,7 +89,7 @@ class MonitoreoController extends Controller
                     $resultEmails = Excel::toCollection(new MonitoreoImport, $path);
                     $data = $resultEmails->first();
                     $resp_file = self::create_file($ruta_raiz, $data[0][1]);
-                    if($resp_file){
+                    if ($resp_file) {
                         self::create_log($ruta_raiz, $key, $data);
                     }
                 }
@@ -105,7 +107,8 @@ class MonitoreoController extends Controller
         return true;
     }
 
-    public function create_log($ruta_raiz, $key, $data){
+    public function create_log($ruta_raiz, $key, $data)
+    {
 
 
         $map_log = [
@@ -118,6 +121,5 @@ class MonitoreoController extends Controller
         ];
 
         LogMonitoreo::create_log($map_log);
-
     }
 }

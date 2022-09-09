@@ -15,7 +15,7 @@ class MonitoreoTest extends DuskTestCase
     private $password = "isqRDw9w5GDA7";
     /**
      * A Dusk test example.
-     *
+     * @group monitoreos 
      * @return void
      */
     public function testExample()
@@ -46,7 +46,7 @@ class MonitoreoTest extends DuskTestCase
 
         foreach ($logs as $key => $value) {
             $this->browse(function (Browser $browser) use ($value, $key) {
-                $test = true;
+                $test = false;
 
                 if ($test && $key == "https://aaa.stradata.com.co/") {
                     $browser->visit('https://sdscode.local/');
@@ -87,8 +87,9 @@ class MonitoreoTest extends DuskTestCase
                     $browser->type('companyId', $value[$k]["company_id"])
                         ->type('numRowSearched', $value[$k]["num_row_searched"]);
 
-                    /* $browser->press('Enviar datos')
-                        ->assertSee('Petici\u00f3n procesada correctamente', 15); */
+                    # envio de la informacion    
+                    $browser->press('Enviar datos')
+                        ->assertSee('Petici\u00f3n procesada correctamente', 15); 
 
                     # actualizamos el registro
                     $regist_log = LogMonitoreo::find($value[$k]["id"]);
