@@ -4,20 +4,32 @@ namespace Tests\Browser;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class MediosTest extends DuskTestCase
 {
+
     private $sites = [
-       /*  "RDS Principal" => 2,
-        "RDS Credicorp" => 3,
-        "Banrep" => 4,
-        "RDS Uala" => 5,
-        "HostDine" => 6,
-        "Bancamia" => 7,
-        "Rci"  => 8 */
+      /*   "principal" => 2,
+        "credicorp" => 3,
+        "banrep" => 4,
+        "uala" => 5,
+        "hostdime" => 6,
+        "bancamia" => 7,
+        "rci" => 8 */
+
     ];
+
+    private $sql_global = "SELECT FORMAT(COUNT(DISTINCT n.id),0,'de_DE') AS noticias,
+        FORMAT(MAX(n.id),0,'de_DE') AS 'id_noticias',
+        FORMAT(COUNT(i.id),0,'de_DE') AS implicados,
+        FORMAT(MAX(i.id_noticia),0,'de_DE') AS 'id_implicados',
+            (SELECT COUNT(*) FROM stradata_sds_global.sds_implicados WHERE delitos_implicado LIKE '%|%') AS barras
+                FROM stradata_sds_global.sds_noticias n
+                LEFT JOIN stradata_sds_global.sds_implicados i ON n.id = i.id_noticia
+            WHERE DATE(n.created_at) = DATE(NOW())";
 
 
     private $ruta_init = "http://localhost/phpmyadmin/index.php?route=/";
@@ -55,14 +67,15 @@ class MediosTest extends DuskTestCase
         $sites = (object) $this->sites;
         foreach ($sites as $key => $value) {
             $this->user_primaria = ($value == 6) ? "stradata_proceso" : "procesos";
-            self::set_rds($value);
+            self::set_rds($value, $key);
         }
     }
 
-    private function set_rds($rds)
+    private function set_rds($rds, $key)
     {
+
         try {
-            $this->browse(function (Browser $browser) use ($rds) {
+            $this->browse(function (Browser $browser) use ($rds, $key) {
 
                 # apuntador de rds
                 $browser->visit($this->ruta_init)
@@ -107,8 +120,20 @@ class MediosTest extends DuskTestCase
                     Log::info("Archivo subido implicados - , " . $this->ruta_implicados[$i]);
                     //->waitForText('Importación ejecutada exitosamente');
                 }
+
+                # Consulta RDS
+                $data = DB::connection("mysql_rds_" . $key)->select("$this->sql_global");
+                Log::info(
+                    "\n" .
+                        "noticias" . ": "  . $data[0]->noticias . "\n" .
+                        "id noticias" . ": "  . ((empty($data[0]->id_noticias)) ? "null" : $data[0]->id_noticias) . "\n" .
+                        "implicados" . ": " . $data[0]->implicados . "\n" .
+                        "id implicados" . ": " . ((empty($data[0]->id_implicados)) ? "null" : $data[0]->id_implicados) . "\n" .
+                        "barras" . ": " . $data[0]->barras
+                );
             });
-            Log::info("Archivo subido correctamente, " . array_search($rds, $this->sites));
+            Log::info("Archivo subido correctamente, " . "RDS" . array_search($rds, $this->sites));
+            Log::info("-----------------------------");
         } catch (\Exception $e) {
             Log::error($e->getMessage());
         }

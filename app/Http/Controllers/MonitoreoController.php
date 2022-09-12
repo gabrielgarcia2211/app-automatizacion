@@ -18,9 +18,9 @@ class MonitoreoController extends Controller
     {
 
         $rutaMonits = [
-            "/uala/",
-            "/nubank/",
-            "/crediservir/",
+            "/corbeta/",
+            "/grupoexito/",
+            "/postobon/",
             // "/auteco/",
         ];
 
