@@ -32,6 +32,7 @@ class MediosTest extends DuskTestCase
             WHERE DATE(n.created_at) = DATE(NOW())";
 
 
+    
     private $ruta_init = "http://localhost/phpmyadmin/index.php?route=/";
     private $link_noticias = "table/import&db=stradata_sds_global&table=sds_noticias&server=";
     private $link_implicados = "table/import&db=stradata_sds_global&table=sds_implicados&server=";

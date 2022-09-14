@@ -18,9 +18,9 @@ class MonitoreoController extends Controller
     {
 
         $rutaMonits = [
-            "/corbeta/",
-            "/grupoexito/",
-            "/postobon/",
+            "/sds/",
+            //"/corbeta/",
+            //"/grupoexito/",
             // "/auteco/",
         ];
 
@@ -31,35 +31,43 @@ class MonitoreoController extends Controller
     private function get_unzip_monitoreo($monits)
     {
 
-        for ($i = 0; $i < count($monits); $i++) {
+        try {
+            for ($i = 0; $i < count($monits); $i++) {
 
-            $arrFiles = scandir($this->rutaInit . $monits[$i]);
-            $arrFiles = self::filter_zip($arrFiles);
+                $arrFiles = scandir($this->rutaInit . $monits[$i]);
+                $arrFiles = self::filter_zip($arrFiles);
 
-            for ($j = 0; $j < count($arrFiles); $j++) {
+                for ($j = 0; $j < count($arrFiles); $j++) {
 
-                $informacionDelArchivo = $this->rutaInit . $monits[$i] . $arrFiles[$j];
+                    $informacionDelArchivo = $this->rutaInit . $monits[$i] . $arrFiles[$j];
 
-                $zip = new ZipArchive;
-                $directorioSalida = $this->rutaInit . $monits[$i];
+                    $zip = new ZipArchive;
+                    $directorioSalida = $this->rutaInit . $monits[$i];
 
-                if (!file_exists($informacionDelArchivo)) {
-                    die("No se puede abrir el archivo" . $monits[$i] . $arrFiles[$j]);
-                    continue;
+                    if (!file_exists($informacionDelArchivo)) {
+                        die("No se puede abrir el archivo" . $monits[$i] . $arrFiles[$j]);
+                        continue;
+                    }
+
+                    $zip->open($informacionDelArchivo);
+                    $zip->extractTo($directorioSalida);
+                    $zip->close();
                 }
 
-                $zip->open($informacionDelArchivo);
-                $zip->extractTo($directorioSalida);
-                $zip->close();
+                $arrFiles = scandir($this->rutaInit . $monits[$i]);
+                $arrFiles = $this->filter_file($arrFiles);
 
                 $tempKey = trim($monits[$i], "/");
-                $tempName = trim($arrFiles[$j], ".zip");
-                $this->list_file[$tempKey][] = $tempName;
-                Log::info('Monitoreo extraido, ' . $tempKey . " " . $tempName);
-            }
-        }
 
-        return (object)$this->list_file;
+                for ($k = 0; $k < count($arrFiles); $k++) {
+                    $this->list_file[$tempKey][] = $arrFiles[$k];
+                }
+            }
+
+            return (object)$this->list_file;
+        } catch (\Exception $th) {
+            Log::error($th->getMessage());
+        }
     }
 
 
@@ -74,6 +82,19 @@ class MonitoreoController extends Controller
         }
 
         return $result;
+    }
+
+    private function filter_file($list): array
+    {
+        $result = array();
+        for ($i = 0; $i < count($list); $i++) {
+            $pos = str_contains($list[$i], '.');
+            if (!$pos) {
+                array_push($result, $list[$i]);
+            }
+        }
+        unset($result[0]);
+        return array_values($result);
     }
 
     public function create_notify_people($monitoreos)
