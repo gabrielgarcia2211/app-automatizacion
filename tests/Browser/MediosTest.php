@@ -48,13 +48,13 @@ class MediosTest extends DuskTestCase
 
     # ruta de las carpetas
     private $ruta_noticias = [
-        "D:\mediospublicos" . "/" . "noticias_20220914.csv.gz",
-        "D:\mediospublicos" . "/" . "noticias_fiscalia_20220914.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_20220919.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_fiscalia_20220919.csv.gz",
     ];
 
     private $ruta_implicados = [
-        "D:\mediospublicos" . "/" . "implicados_20220914_sinAkasCortos.csv.gz",
-        "D:\mediospublicos" . "/" . "implicados20220914_fiscalia_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados_20220919_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados20220919_fiscalia_sinAkasCortos.csv.gz",
     ];
 
     private $fields = [
@@ -166,7 +166,6 @@ class MediosTest extends DuskTestCase
 
     private function generate_csv($ruta, $data, $headers, $delimiter)
     {
-
         $ruta = $ruta . "/" . "respuesta.csv";
         $extra = [date("Y-m-d H:i:s"), "GABRIEL GARCIA"];
 

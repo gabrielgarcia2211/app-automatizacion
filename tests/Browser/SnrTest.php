@@ -10,22 +10,43 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class SnrTest extends DuskTestCase
 {
+    //   "rci" => 8 
     private $sites = [
         "principal" => 2,
-        /* "credicorp" => 3,
-          "banrep" => 4,
-          "uala" => 5,
-          "hostdime" => 6,
-          "bancamia" => 7,
-          "rci" => 8 */
+        // "credicorp" => 3,
+         //"banrep" => 4,
+        /*  "uala" => 5,
+         "hostdime" => 6,
+         "bancamia" => 7,  */
     ];
 
+    /**1. HOSTDIME
+2. PRINCIPAL
+3. CREDICORP
+4. BANREP
+5. UALA
+6. BANCAMIA */
+
+
     private $ruta_init = "http://localhost/phpmyadmin/index.php?route=/";
-    private $link_snr = "table/export&db=stradata_sds_global&table=InfoNotaria&single_table=true&server=";
+
+    private $link_snr_create = "table/operations&db=stradata_sds_global&table=InfoNotaria&server=";
+    private $link_snr_import = "table/import&db=stradata_sds_global&table=InfoNotaria_new&server=";
+    private $link_snr_export = "table/export&db=stradata_sds_global&table=InfoNotaria&single_table=true&server=";
+    private $link_snr_import_general = "database/import&db=stradata_sds_global&server=";
 
 
     private $user_primaria = "";
     private $password_primaria = "vi8VAeQBsASitVxDJw";
+
+    # ruta de las carpetas
+    private $ruta_archivo = "D:\snr" . "/" . "SNR_20220916.csv";
+    private $ruta_archivo_import = "D:\snr" . "/" . "InfoNotaria.sql";
+
+    private $fields = [
+        "infoNotaria" => 'TIPO_DE_DOCUMENTO,RADICADO_DEL_PROCESO,NO_DE_JUZGADO,JUZGADO_DE_ORIGEN,FECHA_DE_OFICIO,FOLIO_MATRICULA_INMOBILIARIA,FECHA_DE_REPORTE,ORIGEN,FOLIO_NUMBER,MAIL_DESPACHO,INFORMACION_PREDIO'
+    ];
+
     /**
      * A Dusk test example.
      * @group snr 
@@ -36,21 +57,28 @@ class SnrTest extends DuskTestCase
         $sites = (object) $this->sites;
         foreach ($sites as $key => $value) {
             $this->user_primaria = ($value == 6) ? "stradata_proceso" : "procesos";
-            self::set_rds($value, $key);
+            if ($value === 2) {
+                self::get_rds($value, $key);
+            } else {
+                self::set_rds_snr($value, $key);
+            }
         }
     }
 
-    private function set_rds($rds, $key)
+    private function get_rds($rds, $key)
     {
 
         try {
             $this->browse(function (Browser $browser) use ($rds, $key) {
 
+                $new_table = "InfoNotaria";
+
+                # Configuracion para la descarga de archivos
                 $url = $browser->driver->getCommandExecutor()->getAddressOfRemoteServer();
                 $uri = '/session/' . $browser->driver->getSessionID() . '/chromium/send_command';
                 $body = [
                     'cmd' => 'Page.setDownloadBehavior',
-                    'params' => ['behavior' => 'allow', 'downloadPath' => 'D:\sip\hola.zip']
+                    'params' => ['behavior' => 'allow', 'downloadPath' => 'D:\snr']
                 ];
                 (new \GuzzleHttp\Client())->post($url . $uri, ['body' => json_encode($body)]);
 
@@ -64,13 +92,85 @@ class SnrTest extends DuskTestCase
                     ->type('pma_password', $this->password_primaria)
                     ->press('Continuar');
 
+                # creacion de tabla 
+                $browser->visit($this->ruta_init . $this->link_snr_create . $rds);
 
-                $browser->visit($this->ruta_init . $this->link_snr . $rds)
-                    ->waitForText('InfoNotaria')
-                    ->press('Continuar');
+                $inputs = $browser->elements('input[name^=new_name]');
+
+                foreach ($inputs as $key => $input) {
+                    if ($key == 2) {
+                        $input->clear();
+                        $input->sendKeys($new_table);
+                        break;
+                    }
+                }
+                $browser->radio('what', 'structure')
+                    ->click('input[name="submit_copy"]');
+
+                sleep(10);
+
+                # importacion del archvio csv
+                $browser->visit($this->ruta_init . $this->link_snr_import . $rds)
+                    ->waitForText($new_table);
+
+                #carga de datos
+                $browser->attach('import_file',  $this->ruta_archivo)
+                    ->type('csv_terminated', ";")
+                    ->type('csv_columns', $this->fields["infoNotaria"])
+                    ->press('Continuar'); 
+
+                # exportacion de datos
+                $browser->visit($this->ruta_init . $this->link_snr_export . $rds)
+                    ->waitForText($new_table)
+                    ->press('Continuar'); 
+
+
+                self::get_rename_table($key);
             });
         } catch (\Exception $e) {
             Log::error($e->getMessage());
         }
+    }
+
+    private function set_rds_snr($rds, $key)
+    {
+        try {
+            $this->browse(function (Browser $browser) use ($rds, $key) {
+
+                $stash = "stradata_sds_global";
+
+                # apuntador de rds
+                $browser->visit($this->ruta_init)
+                    ->select('server', $rds)
+                    ->waitForText('Bienvenido a phpMyAdmin', 15);
+
+                # inicio de sesion
+                $browser->type('pma_username', $this->user_primaria)
+                    ->type('pma_password', $this->password_primaria)
+                    ->press('Continuar');
+
+
+                # importacion del archvio csv
+                $browser->visit($this->ruta_init . $this->link_snr_import_general . $rds)
+                    ->waitForText($stash);
+
+                #carga de datos
+                $browser->attach('import_file',  $this->ruta_archivo_import)
+                    ->press('Continuar');
+
+                Log::info("Archivo subido - " . $this->ruta_archivo_import);
+
+                self::get_rename_table($key);
+            });
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
+    }
+
+    private function get_rename_table($key)
+    {
+        $sql_global = "RENAME TABLE InfoNotaria TO InfoNotaria_" . date("Ymd") . ", InfoNotaria_new TO InfoNotaria";
+        $data = DB::connection("mysql_rds_" . $key)->select("$sql_global");
+        Log::info('Proceso realizado: ' . $key);
     }
 }
