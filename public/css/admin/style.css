@@ -60,3 +60,18 @@ form {
 .nav-mayor .navbar-nav .nav-item .nav-link:hover {
     background: #ecf3ff;
 }
+
+/* Configuracion de Vue Data Grid */
+
+.ag-theme-material .ag-header-cell {
+    font-size: 16px;
+}
+
+.ag-theme-material .ag-cell-value {
+    font-size: 14px;
+}
+
+.ag-theme-material .delete-rows {
+    background-color: #dc3545 !important;
+}
+

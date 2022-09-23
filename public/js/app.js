@@ -58967,6 +58967,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 // Importar Librerias o Modulos
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -58987,7 +58988,10 @@ __webpack_require__.r(__webpack_exports__);
       rowChange: {
         old: []
       },
-      isRowSelectable: null
+      isRowSelectable: null,
+      rowClassRules: {
+        "delete-rows": "data.activo == 0"
+      }
     };
   },
   components: {
@@ -59019,7 +59023,6 @@ __webpack_require__.r(__webpack_exports__);
       }];
       axios.get("/administration/sites").then(function (data) {
         _this.rowData = data.data ? data.data : [];
-        console.log(_this.rowData);
       })["catch"](function (error) {
         _this.$readStatusHttp(error);
       });
@@ -83028,6 +83031,7 @@ var render = function () {
           pagination: true,
           paginationPageSize: 10,
           isRowSelectable: _vm.isRowSelectable,
+          rowClassRules: _vm.rowClassRules,
           enableCellTextSelection: true,
         },
       }),

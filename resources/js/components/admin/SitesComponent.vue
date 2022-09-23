@@ -10,6 +10,7 @@
       :pagination="true"
       :paginationPageSize="10"
       :isRowSelectable="isRowSelectable"
+      :rowClassRules="rowClassRules"
       :enableCellTextSelection="true"
     >
     </ag-grid-vue>
@@ -39,6 +40,7 @@ export default {
         old: [],
       },
       isRowSelectable: null,
+      rowClassRules: { "delete-rows": "data.activo == 0"},
     };
   },
   components: {
@@ -69,7 +71,6 @@ export default {
         .get("/administration/sites")
         .then((data) => {
           this.rowData = data.data ? data.data : [];
-          console.log(this.rowData);
         })
         .catch((error) => {
           this.$readStatusHttp(error);

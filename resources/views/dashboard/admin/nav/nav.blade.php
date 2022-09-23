@@ -21,7 +21,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="">
-                                <i class="ni ni-bullet-list-67 text-default"></i>
+                                <i class="fas fa-list"></i>
                                 <span class="nav-link-text">Lista de empresas</span>
                             </a>
                         </li>
@@ -37,30 +37,11 @@
     <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <!-- Search form -->
-                <!-- Navbar links -->
-                <ul class="navbar-nav align-items-center ml-md-auto ">
 
-                    <li class="nav-item d-xl-none">
-                        <!-- Sidenav toggler -->
-                        <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin"
-                            data-target="#sidenav-main">
-                            <div class="sidenav-toggler-inner">
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                                <i class="sidenav-toggler-line"></i>
-                            </div>
-                        </div>
-                    </li>
-                </ul>
-                <ul class="navbar-nav align-items-center ml-auto ml-md-0 ">
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link" href="{{ route('logout') }}" role="button">
-                            <i class="ni ni-button-power"></i>
-                        </a>
-                    </li>
-
+                <ul class="navbar-nav align-items-center ml-auto" style="float: right">
+                    <a class="nav-link" href="{{ route('logout') }}" role="button">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
                 </ul>
 
             </div>
