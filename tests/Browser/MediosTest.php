@@ -48,13 +48,13 @@ class MediosTest extends DuskTestCase
 
     # ruta de las carpetas
     private $ruta_noticias = [
-        "D:\mediospublicos" . "/" . "noticias_20220919.csv.gz",
-        "D:\mediospublicos" . "/" . "noticias_fiscalia_20220919.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_20220930.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_fiscalia_20220930.csv.gz",
     ];
 
     private $ruta_implicados = [
-        "D:\mediospublicos" . "/" . "implicados_20220919_sinAkasCortos.csv.gz",
-        "D:\mediospublicos" . "/" . "implicados20220919_fiscalia_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados_20220930_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados20220930_fiscalia_sinAkasCortos.csv.gz",
     ];
 
     private $fields = [

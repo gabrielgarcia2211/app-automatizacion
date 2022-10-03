@@ -10,14 +10,15 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class SnrTest extends DuskTestCase
 {
-    //   "rci" => 8 
+  
     private $sites = [
         "principal" => 2,
-        // "credicorp" => 3,
-         //"banrep" => 4,
-        /*  "uala" => 5,
-         "hostdime" => 6,
-         "bancamia" => 7,  */
+        "credicorp" => 3,
+        "banrep" => 4,
+        "uala" => 5,
+        "hostdime" => 6,
+        "bancamia" => 7, 
+        "rci" => 8 
     ];
 
     /**1. HOSTDIME
@@ -32,7 +33,7 @@ class SnrTest extends DuskTestCase
 
     private $link_snr_create = "table/operations&db=stradata_sds_global&table=InfoNotaria&server=";
     private $link_snr_import = "table/import&db=stradata_sds_global&table=InfoNotaria_new&server=";
-    private $link_snr_export = "table/export&db=stradata_sds_global&table=InfoNotaria&single_table=true&server=";
+    private $link_snr_export = "table/export&db=stradata_sds_global&table=InfoNotaria_new&single_table=true&server=";
     private $link_snr_import_general = "database/import&db=stradata_sds_global&server=";
 
 
@@ -40,8 +41,8 @@ class SnrTest extends DuskTestCase
     private $password_primaria = "vi8VAeQBsASitVxDJw";
 
     # ruta de las carpetas
-    private $ruta_archivo = "D:\snr" . "/" . "SNR_20220916.csv";
-    private $ruta_archivo_import = "D:\snr" . "/" . "InfoNotaria.sql";
+    private $ruta_archivo = "D:\snr" . "/" . "SNR_20221003.csv";
+    private $ruta_archivo_import = "D:\snr" . "/" . "InfoNotaria_new.sql";
 
     private $fields = [
         "infoNotaria" => 'TIPO_DE_DOCUMENTO,RADICADO_DEL_PROCESO,NO_DE_JUZGADO,JUZGADO_DE_ORIGEN,FECHA_DE_OFICIO,FOLIO_MATRICULA_INMOBILIARIA,FECHA_DE_REPORTE,ORIGEN,FOLIO_NUMBER,MAIL_DESPACHO,INFORMACION_PREDIO'
@@ -71,7 +72,7 @@ class SnrTest extends DuskTestCase
         try {
             $this->browse(function (Browser $browser) use ($rds, $key) {
 
-                $new_table = "InfoNotaria";
+                $new_table = "InfoNotaria_new";
 
                 # Configuracion para la descarga de archivos
                 $url = $browser->driver->getCommandExecutor()->getAddressOfRemoteServer();
@@ -91,6 +92,8 @@ class SnrTest extends DuskTestCase
                 $browser->type('pma_username', $this->user_primaria)
                     ->type('pma_password', $this->password_primaria)
                     ->press('Continuar');
+
+                # PARTE 1 ----
 
                 # creacion de tabla 
                 $browser->visit($this->ruta_init . $this->link_snr_create . $rds);
@@ -118,6 +121,9 @@ class SnrTest extends DuskTestCase
                     ->type('csv_terminated', ";")
                     ->type('csv_columns', $this->fields["infoNotaria"])
                     ->press('Continuar'); 
+
+
+                # PARTE 2 ----
 
                 # exportacion de datos
                 $browser->visit($this->ruta_init . $this->link_snr_export . $rds)

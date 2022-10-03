@@ -116,7 +116,7 @@ class MonitoreoTest extends DuskTestCase
             'https://amlsds.stradata.com.co/' =>     'aml',
             'https://monitoreo.stradata.com.co/'  => 'monitoreo',
             'https://aress.stradata.com.co/' =>     'aress',
-            'https://atleticonacional.stradata.com.co/' =>     'atleticonacional',
+            'https://atleticonacional.stradata.com.co/' =>     'nacional',
             'https://auteco.stradata.com.co/' =>     'auteco',
             'https://bancamiasds.stradata.com.co/' =>     'bancamia',
             'https://bancolombiasds.stradata.com.co/' =>     'bancolombia',
