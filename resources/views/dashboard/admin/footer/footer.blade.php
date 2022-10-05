@@ -1,16 +1,13 @@
 </div>
-<div class="main-footer">
-
-    <footer class="footer pt-0 container main-footer" style="padding-left: 25%">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <div class="copyright text-center  text-lg-left  text-muted">
-                    &copy; 2020 <a href="#" class="font-weight-bold ml-1"
-                        target="_blank">Stradata - Beta</a>
-                </div>
+<footer class="py-4 bg-light mt-auto">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
+            <div class="text-muted">Copyright &copy; Your Website 2022</div>
+            <div>
+                <a href="#">Privacy Policy</a>
+                &middot;
+                <a href="#">Terms &amp; Conditions</a>
             </div>
         </div>
-    </footer>
-
-</div>
-
+    </div>
+</footer>
