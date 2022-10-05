@@ -110,7 +110,7 @@ class SnrTest extends DuskTestCase
                 $browser->radio('what', 'structure')
                     ->click('input[name="submit_copy"]');
 
-                sleep(10);
+                $browser->pause(7000);
 
                 # importacion del archvio csv
                 $browser->visit($this->ruta_init . $this->link_snr_import . $rds)

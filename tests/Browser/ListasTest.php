@@ -4,111 +4,97 @@ namespace Tests\Browser;
 
 use Tests\DuskTestCase;
 use Laravel\Dusk\Browser;
-use App\Models\LogMonitoreo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class MonitoreoTest extends DuskTestCase
+class ListasTest extends DuskTestCase
 {
 
     private $user = "procesos.sds";
     private $password = "isqRDw9w5GDA7";
+    private $rutaInit = "D:\listas";
+
     /**
      * A Dusk test example.
-     * @group monitoreos 
+     * @group listas 
      * @return void
      */
     public function testExample()
     {
-
-        # extraemos los monitoreos pendientes de ejecucion
-        $logs = LogMonitoreo::where('status', 0)->get()->toArray();
+        # extraemos los sitios para la carga de archivos
         $sites = self::map_sites();
+        $arrFiles = scandir($this->rutaInit);
+        $arrFiles = self::filter_file($arrFiles);
 
-        if(empty($logs)){
-            echo "No logs found.";
-            return;
-        }
+        try {
+            foreach ($sites as $key => $value) {
+                $this->browse(function (Browser $browser) use ($value, $key, $arrFiles) {
 
-        # busqueda de sitios
-        for ($i = 0; $i < count($logs); $i++) {
-            if (in_array($logs[$i]["empresa"], $sites)) {
-                $position = array_search($logs[$i]["empresa"], $sites);
-                if (!empty($position)) {
-                    $logs[$i]['site'] = $position;
-                }
-            }
-        }
-
-        # agrupamos la informacion por sitios para realizar la prueba duskTest
-        $logs = (object) self::group_sites('site', $logs);
-
-
-        foreach ($logs as $key => $value) {
-            $this->browse(function (Browser $browser) use ($value, $key) {
-                $test = false;
-
-                if ($test && $key == "https://aaa.stradata.com.co/") {
-                    $browser->visit('https://sdscode.local/');
-                    sleep(15);
-                    $browser->waitForText('Stradata')
-                        ->type('usuario', 'gabriel.garcia')
-                        ->type('clave', '12345')
-                        ->press('Ingresar');
-                } else if (!$test) {
                     $browser->visit($key)
                         ->waitForText('Stradata')
                         ->type('usuario', $this->user)
                         ->type('clave', $this->password)
                         ->press('Ingresar');
-                }
 
-                for ($k = 0; $k < count($value); $k++) {
+                    for ($k = 0; $k < count($arrFiles); $k++) {
 
-                    if ($test) {
-                        $browser->visit('https://sdscode.local/utils/lista/Kfuqm8FrRseVfMOAcSnSxnKRwH1s3DLGOeyT');
-                    } else {
-                        $browser->visit($key . '/utils/lista/Kfuqm8FrRseVfMOAcSnSxnKRwH1s3DLGOeyT');
+                        $browser->visit($key . 'app/lista/');
+
+                        $file_name = $this->rutaInit . "/" . $arrFiles[$k];
+
+                        # cargar la informacion csv
+                        $browser->attach('userfile',  $file_name);
+
+                        $browser->click('[name="cruce_listas_p"]')->acceptDialog();
+                        $browser->pause(2000);
+
+                        # extraemos y escribimos la informacion en el log
+                        $text = null;
+                        if ((self::seeExists('no corresponde', $browser) == TRUE) 
+                        || (self::seeExists('No se completa sincronizacion', $browser) == TRUE)) {
+                            Log::info("No pudo ser cargada: $file_name " . $key);
+                        } else {
+                            Log::info("Cargado Correctamente: $file_name " . $key);
+                        }
+                        $text = $browser->text(false);
+                        Log::info($text);
+
+
                     }
-
-                    # cargar la informacion consultedLists de la tabla
-                    $browser->attach('consultedLists',  $value[$k]["ruta_consult"])
-                        ->assertSee('consultedLists');
-
-                    # cargar la informacion listToSearch de la tabla
-                    $browser->attach('listToSearch',  $value[$k]["ruta_list"])
-                        ->assertSee('listToSearch');
-
-                    # cargar la informacion notifyPeople de la tabla
-                    $browser->attach('notifyPeople',  $value[$k]["ruta_notify"])
-                        ->assertSee('notifyPeople');
-
-                    # seteo de campos companiId y nowRow
-                    $browser->type('companyId', $value[$k]["company_id"])
-                        ->type('numRowSearched', $value[$k]["num_row_searched"]);
-
-                    # envio de la informacion    
-                    $browser->press('Enviar datos')
-                        ->assertSee('Petici\u00f3n procesada correctamente', 15); 
-
-                    # actualizamos el registro
-                    $regist_log = LogMonitoreo::find($value[$k]["id"]);
-                    $regist_log->status = 1;
-                    $regist_log->save();
-
-
-                    Log::debug("Monitoreo Enviado: " . " " . $key);
-                }
-            });
+                });
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
         }
     }
 
-    
+    private function filter_file($list): array
+    {
+        $result = array();
+        for ($i = 0; $i < count($list); $i++) {
+            $pos = str_contains($list[$i], '.csv');
+            if ($pos) {
+                array_push($result, $list[$i]);
+            }
+        }
+        return array_values($result);
+    }
+
+    function seeExists($element, $I)
+    {
+        try {
+            $I->assertSee($element);
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
     private function map_sites()
     {
         return array(
             'https://sdscode.local/' =>     'local',
-            'https://bpo.stradata.com.co/' =>     'bpo',
+            /* 'https://bpo.stradata.com.co/' =>     'bpo',
             'https://btg.stradata.com.co/' =>     'btg',
             'https://sds.stradata.com.co/' =>     'sds',// NO PEPS-EXTRANJEROS - RELACIONADOS-PEPS-EXTRANJEROS
             'https://aaa.stradata.com.co/' =>     'aaa',
@@ -165,22 +151,7 @@ class MonitoreoTest extends DuskTestCase
             'https://release.stradata.com.co/'  => 'release',
             'https://wisds.stradata.com.co/' =>     'wi', // NO PEPS-EXTRANJEROS - RELACIONADOS-PEPS-EXTRANJEROS
             'https://omnilatamsds.stradata.com.co/' => 'omnilatam',
-            'https://cissds.stradata.com.co/' => 'cis', 
+            'https://cissds.stradata.com.co/' => 'cis', */
         );
-    }
-
-    function group_sites($key, $data): array
-    {
-        $result = array();
-
-        foreach ($data as $val) {
-            if (array_key_exists($key, $val)) {
-                $result[$val[$key]][] = $val;
-            } else {
-                $result[""][] = $val;
-            }
-        }
-
-        return $result;
     }
 }
