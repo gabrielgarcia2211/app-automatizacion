@@ -10,7 +10,14 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class MediosTest extends DuskTestCase
 {
-
+    /* RDS principal, 
+    RDS credicorp, 
+    RDS banrep, 
+    RDS uala, 
+    RDS hostdime, 
+    RDS bancamia, 
+    RDS rci, 
+    RDS alianza */
     private $sites = [
         "principal" => 2,
         "credicorp" => 3,
@@ -18,7 +25,8 @@ class MediosTest extends DuskTestCase
         "uala" => 5,
         "hostdime" => 6,
         "bancamia" => 7,
-        "rci" => 8
+        "rci" => 8,
+        "alianza" => 9,
     ];
 
     private $sql_global = "SELECT FORMAT(COUNT(DISTINCT n.id),0,'de_DE') AS noticias,
@@ -48,13 +56,13 @@ class MediosTest extends DuskTestCase
 
     # ruta de las carpetas
     private $ruta_noticias = [
-        "D:\mediospublicos" . "/" . "noticias_20221003.csv.gz",
-        "D:\mediospublicos" . "/" . "noticias_fiscalia_20221003.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_20221102.csv.gz",
+        "D:\mediospublicos" . "/" . "noticias_fiscalia_20221102.csv.gz",
     ];
 
     private $ruta_implicados = [
-        "D:\mediospublicos" . "/" . "implicados_20221003_sinAkasCortos.csv.gz",
-        "D:\mediospublicos" . "/" . "implicados20221003_fiscalia_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados_20221102_sinAkasCortos.csv.gz",
+        "D:\mediospublicos" . "/" . "implicados20221102_fiscalia_sinAkasCortos.csv.gz",
     ];
 
     private $fields = [

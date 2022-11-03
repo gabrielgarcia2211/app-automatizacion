@@ -18,7 +18,8 @@ class SnrTest extends DuskTestCase
         "uala" => 5,
         "hostdime" => 6,
         "bancamia" => 7, 
-        "rci" => 8 
+        "rci" => 8,
+        "alianza" => 9, 
     ];
 
     /**1. HOSTDIME

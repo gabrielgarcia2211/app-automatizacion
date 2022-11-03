@@ -18,7 +18,17 @@ class MonitoreoController extends Controller
     {
 
         $rutaMonits = [
-            "/bancamia/",
+            "/solla/",
+            "/postobon/",
+            "/corbeta/",
+            "/grupoexito/",
+            "/nubank/",
+            "/crystal/",
+          /*   "/aml/" */
+           /*  "/crystal/",
+            "/grupoexito/",
+            "/postobon/",
+            "/solla/", */
          /*    "/wi/",
             "/nacional/",
             "/solla/", */
@@ -126,7 +136,7 @@ class MonitoreoController extends Controller
         $texto = $emails;
         fwrite($fh, $texto) or die("No se pudo escribir en el archivo");
         fclose($fh);
-        echo "Se ha escrito sin problemas" . "\n";
+        Log::debug("Se ha escrito sin problemas");
         return true;
     }
 
