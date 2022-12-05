@@ -18,22 +18,11 @@ class MonitoreoController extends Controller
     {
 
         $rutaMonits = [
-            "/solla/",
-            "/postobon/",
-            "/corbeta/",
-            "/grupoexito/",
-            "/nubank/",
             "/crystal/",
-          /*   "/aml/" */
-           /*  "/crystal/",
+            "/sds/",
             "/grupoexito/",
             "/postobon/",
-            "/solla/", */
-         /*    "/wi/",
-            "/nacional/",
-            "/solla/", */
-            //"/grupoexito/",
-            // "/auteco/",
+            "/aaa/",
         ];
 
         $get_list = self::get_unzip_monitoreo($rutaMonits);

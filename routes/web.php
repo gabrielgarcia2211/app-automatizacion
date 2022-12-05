@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PermisosToRolsController;
+use App\Http\Controllers\PermisosToRolsControllerV2;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/test',[PermisosToRolsController::class, 'extract_permissions']);
+Route::get('/test2',[PermisosToRolsControllerV2::class, 'extract_permissions']);
+

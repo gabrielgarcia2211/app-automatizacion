@@ -63,6 +63,26 @@ return [
             ]) : [],
         ],
 
+        'mysql_rds_search' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_RDS_SEARCH', '127.0.0.1'),
+            'port' => env('DB_PORT_RDS_SEARCH', '3306'),
+            'database' => env('DB_DATABASE_RDS_SEARCH', 'forge'),
+            'username' => env('DB_USERNAME_RDS_SEARCH', 'forge'),
+            'password' => env('DB_PASSWORD_RDS_SEARCH', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mysql_rds_principal' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),
@@ -222,6 +242,27 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+
+        'mysql_rds_crezcamos' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_RDS_CREZCAMOS', '127.0.0.1'),
+            'port' => env('DB_PORT_RDS_CREZCAMOS', '3306'),
+            'database' => env('DB_DATABASE_RDS_CREZCAMOS', 'forge'),
+            'username' => env('DB_USERNAME_RDS_CREZCAMOS', 'forge'),
+            'password' => env('DB_PASSWORD_RDS_CREZCAMOS', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
 
         'pgsql' => [
             'driver' => 'pgsql',

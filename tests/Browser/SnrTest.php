@@ -12,14 +12,15 @@ class SnrTest extends DuskTestCase
 {
   
     private $sites = [
-        "principal" => 2,
+        /* "principal" => 2,
         "credicorp" => 3,
         "banrep" => 4,
         "uala" => 5,
         "hostdime" => 6,
         "bancamia" => 7, 
         "rci" => 8,
-        "alianza" => 9, 
+        "alianza" => 9,  */
+        "crezcamos" => 10,
     ];
 
     /**1. HOSTDIME
@@ -42,7 +43,7 @@ class SnrTest extends DuskTestCase
     private $password_primaria = "vi8VAeQBsASitVxDJw";
 
     # ruta de las carpetas
-    private $ruta_archivo = "D:\snr" . "/" . "SNR_20221003.csv";
+    private $ruta_archivo = "D:\snr" . "/" . "SNR_20221122.csv";
     private $ruta_archivo_import = "D:\snr" . "/" . "InfoNotaria_new.sql";
 
     private $fields = [
@@ -60,8 +61,10 @@ class SnrTest extends DuskTestCase
         foreach ($sites as $key => $value) {
             $this->user_primaria = ($value == 6) ? "stradata_proceso" : "procesos";
             if ($value === 2) {
+                # PARTE 1
                 self::get_rds($value, $key);
             } else {
+                # PARTE 2
                 self::set_rds_snr($value, $key);
             }
         }
@@ -97,7 +100,7 @@ class SnrTest extends DuskTestCase
                 # PARTE 1 ----
 
                 # creacion de tabla 
-                $browser->visit($this->ruta_init . $this->link_snr_create . $rds);
+                /* $browser->visit($this->ruta_init . $this->link_snr_create . $rds);
 
                 $inputs = $browser->elements('input[name^=new_name]');
 
@@ -121,7 +124,7 @@ class SnrTest extends DuskTestCase
                 $browser->attach('import_file',  $this->ruta_archivo)
                     ->type('csv_terminated', ";")
                     ->type('csv_columns', $this->fields["infoNotaria"])
-                    ->press('Continuar'); 
+                    ->press('Continuar');  */
 
 
                 # PARTE 2 ----
